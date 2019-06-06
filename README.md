@@ -5,27 +5,34 @@ This repository contains a wrapper for [Swagger Validator Badge](https://github.
 ## Structure
 
 This tool consists of 3 shell scripts:
-- download.sh
-    - Downloads Swagger Validator Badge tool.
-- setup.sh
-- validate.sh
+- [download-validator.sh](download-validator.sh)
+  - Downloads validator (Swagger Validator Badge).
+- [setup-validator.sh](setup-validator.sh)
+  - Starts a local instance of the validator server.
+- [validate.sh](validate.sh)
+  - Validates a URL against the local validator server.
 
 ## Prerequisites
 
 The following tools are needed to run the scripts:
 
-- git
-- maven
-- java
-- sleep
-- jq
+- [git](https://git-scm.com/)
+- [maven](https://maven.apache.org/)
+- [java](https://openjdk.java.net/)
+- [jq](https://stedolan.github.io/jq/)
+- [curl](https://curl.haxx.se/)
 
-The following tools are needed for development (testing):
+You should run the following tools for testing when modifying this codebase, since they're run as part of the [CI build](.travis.yaml):
 
-- shellcheck
-- bats
+- [shellcheck](https://github.com/koalaman/shellcheck)
 
 # Usage
+
+As part of your Travis build, you want run the download and setup scripts in `before_install`, and run the validate script in your `script` section with the URL pointing to the specification file in your repository.
+
+To have a stable build, you should clone a specific release (tag) of OAS Validator.
+
+Here's a sample `.travis.yaml`:
 
 ```yaml
 language: java
@@ -34,15 +41,11 @@ sudo: false
 jdk:
   - openjdk8
 env:
-  - GH_URL=https://raw.githubusercontent.com VALIDATOR_URL=http://localhost:8080/validator/debug?url FILE_TO_VALIDATE=service-info.yaml URL_TO_VALIDATE=$GH_URL/${TRAVIS_PULL_REQUEST_SLUG:-$TRAVIS_REPO_SLUG}/${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}/$FILE_TO_VALIDATE
+  - GH_URL=https://raw.githubusercontent.com FILE_TO_VALIDATE=openapi.yaml URL_TO_VALIDATE=$GH_URL/${TRAVIS_PULL_REQUEST_SLUG:-$TRAVIS_REPO_SLUG}/${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}/$FILE_TO_VALIDATE
 before_install:
-  # This setup will not be needed once the online version of validator-badge supports OAS 3.0. Until then we'll need to set up a local version.
-
-  # build and start validator-badge
-  - git clone --branch=v2.0.0 https://github.com/swagger-api/validator-badge.git
-  - cd validator-badge
-  - mvn package -q -DskipTests=true -Dmaven.javadoc.skip=true -B -V jetty:run &
-  - cd ..
-  - sleep 60
+  - git clone https://github.com/mcupak/oas-validator.git
+  - ./oas-validator/download-validator.sh
+  - ./oas-validator/setup-validator.sh
 script:
+  - ./oas-validator/validate.sh "$URL_TO_VALIDATE"
 ```
