@@ -8,6 +8,5 @@ script:
   - shellcheck *.sh
 
   # dry run of all the scripts
-  - ./download-validator.sh
   - ./setup-validator.sh
   - ./validate.sh "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore-expanded.yaml"

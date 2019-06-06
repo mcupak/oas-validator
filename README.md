@@ -4,11 +4,9 @@ This repository contains a wrapper for [Swagger Validator Badge](https://github.
 
 ## Structure
 
-This tool consists of 3 shell scripts:
-- [download-validator.sh](download-validator.sh)
-  - Downloads validator (Swagger Validator Badge).
+This tool consists of 2 shell scripts:
 - [setup-validator.sh](setup-validator.sh)
-  - Starts a local instance of the validator server.
+  - Downloads Swagger Validator Badge and starts a local instance of the validation server.
 - [validate.sh](validate.sh)
   - Validates a URL against the local validator server.
 
@@ -26,9 +24,9 @@ You should run the following tools for testing when modifying this codebase, sin
 
 - [shellcheck](https://github.com/koalaman/shellcheck)
 
-# Usage
+## Usage
 
-As part of your Travis build, you want run the download and setup scripts in `before_install`, and run the validate script in your `script` section with the URL pointing to the specification file in your repository.
+As part of your Travis build, you want run the setup script in `before_install`, and run the validate script in your `script` section with the URL pointing to the specification file in your repository. The setup step will not be needed once the online version of Swagger Validator Badge supports OAS 3.
 
 To have a stable build, you should clone a specific release (tag) of OAS Validator.
 
@@ -43,8 +41,7 @@ jdk:
 env:
   - GH_URL=https://raw.githubusercontent.com FILE_TO_VALIDATE=openapi.yaml URL_TO_VALIDATE=$GH_URL/${TRAVIS_PULL_REQUEST_SLUG:-$TRAVIS_REPO_SLUG}/${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}/$FILE_TO_VALIDATE
 before_install:
-  - git clone https://github.com/mcupak/oas-validator.git
-  - ./oas-validator/download-validator.sh
+  - git clone --branch=v1.0.0 https://github.com/mcupak/oas-validator.git
   - ./oas-validator/setup-validator.sh
 script:
   - ./oas-validator/validate.sh "$URL_TO_VALIDATE"
