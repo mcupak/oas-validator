@@ -4,4 +4,8 @@ sudo: false
 jdk:
   - openjdk8
 script:
-  - bats test/download-validator.bats
+  # validate scripts
+  - shellcheck *.sh
+
+  # run tests
+  - bats test/*.bats

@@ -20,6 +20,11 @@ The following tools are needed to run the scripts:
 - sleep
 - jq
 
+The following tools are needed for development (testing):
+
+- shellcheck
+- bats
+
 # Usage
 
 ```yaml
