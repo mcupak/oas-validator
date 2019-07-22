@@ -34,10 +34,10 @@ Here's a sample `.travis.yaml`:
 
 ```yaml
 language: java
-dist: trusty
+dist: bionic
 sudo: false
 jdk:
-  - openjdk8
+  - openjdk11
 env:
   - GH_URL=https://raw.githubusercontent.com FILE_TO_VALIDATE=openapi.yaml URL_TO_VALIDATE=$GH_URL/${TRAVIS_PULL_REQUEST_SLUG:-$TRAVIS_REPO_SLUG}/${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}/$FILE_TO_VALIDATE
 before_install:
@@ -46,3 +46,5 @@ before_install:
 script:
   - ./oas-validator/validate.sh "$URL_TO_VALIDATE"
 ```
+
+By default, the validate script performs busy waiting until the validator server is started, with a timeout of 60s. You can override the timout value through the `$VALIDATOR_TIMEOUT` environment variable, e.g. `export VALIDATOR_TIMEOUT=90`.
