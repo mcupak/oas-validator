@@ -1,8 +1,8 @@
 language: java
-dist: trusty
+dist: bionic
 sudo: false
 jdk:
-  - openjdk8
+  - openjdk11
 script:
   # validate scripts
   - shellcheck *.sh

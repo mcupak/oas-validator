@@ -1,9 +1,17 @@
 #!/usr/bin/env bash
 
 VALIDATOR_URL="http://localhost:8080/validator/debug?url"
-
-# use argument as the URL to a file to validate
+# use the first argument as the URL to a file to validate
 URL_TO_VALIDATE="$1"
+# use timeout from environment variable (optional)
+TIMEOUT=60
+[[ -n "$VALIDATOR_TIMEOUT" ]] && TIMEOUT=${VALIDATOR_TIMEOUT}
+
+# wait for the server to start
+for ((i = 1; i <= TIMEOUT; i++)); do
+  if curl -sS "$VALIDATOR_URL" 2> /dev/null; then break; fi
+  sleep 1
+done
 
 # validate
 echo "Validating $URL_TO_VALIDATE:"

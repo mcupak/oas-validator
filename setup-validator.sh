@@ -7,8 +7,5 @@ TARGET=validator-badge
 # download validator badge
 git clone -q --branch=v2.0.0 https://github.com/swagger-api/validator-badge.git "$TARGET"
 
-# change directory instead of -f, otherwise validator-badge does not work correctly
+# change directory instead of -f, otherwise validator-badge does not work correctly, and start the validator server
 ( cd "$TARGET" && mvn package -q -DskipTests=true -Dmaven.javadoc.skip=true -B -V jetty:run & )
-
-# wait for the app to start
-sleep 45
