@@ -7,8 +7,13 @@ This repository contains a wrapper for [Swagger Validator Badge](https://github.
 This tool consists of 2 shell scripts:
 - [setup-validator.sh](setup-validator.sh)
   - Downloads Swagger Validator Badge and starts a local instance of the validation server.
+  - Usage:
+    - `./setup-validator.sh [target] [branch]`
+    - `[target]` - Target directory to store Swagger Validator Badge source in. Optional, defaults to `validator-badge`.
+    - `[branch]` - Branch of [Swagger Validator Badge repository](https://github.com/swagger-api/validator-badge/) to use. Optional, defaults to `v.2.0.4` (latest at the time of writing this).
 - [validate.sh](validate.sh)
   - Validates a URL against the local validator server.
+  - Busy waiting is performed until the validator server is started, with a default timeout of 60s. You can override the timout value through the `$VALIDATOR_TIMEOUT` environment variable, e.g. `export VALIDATOR_TIMEOUT=90`.
 
 ## Prerequisites
 
