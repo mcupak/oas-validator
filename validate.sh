@@ -1,10 +1,16 @@
 #!/usr/bin/env bash
 
-VALIDATOR_URL="http://localhost:8080/validator/debug?url"
 # use the first argument as the URL to a file to validate
 URL_TO_VALIDATE="$1"
-# use timeout from environment variable (optional)
-TIMEOUT=60
+
+# use validator URL from env var if available
+VALIDATOR="https://validator.swagger.io"
+[[ -n "$VALIDATOR_HOST" ]] && VALIDATOR=${VALIDATOR_HOST}
+VALIDATOR_URL="${VALIDATOR}/validator/debug?url"
+
+# use no timeout for remote server, 60s for local server, or env var if available
+TIMEOUT=0
+[[ $VALIDATOR =~ ^http://localhost*|^localhost* ]] && TIMEOUT=60
 [[ -n "$VALIDATOR_TIMEOUT" ]] && TIMEOUT=${VALIDATOR_TIMEOUT}
 
 # wait for the server to start

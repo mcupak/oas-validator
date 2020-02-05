@@ -7,13 +7,19 @@ This repository contains a wrapper for [Swagger Validator Badge](https://github.
 This tool consists of 2 shell scripts:
 - [setup-validator.sh](setup-validator.sh)
   - Downloads Swagger Validator Badge and starts a local instance of the validation server.
+  - Only run this if you need to use a local validation server as opposed to a [public hosted version](http://validator.swagger.io/). Common reasons for doing this would include privacy concerns and access to the latest Swagger Validator Badge features not yet available on the hosted instance.
   - Usage:
     - `./setup-validator.sh [target] [branch]`
-    - `[target]` - Target directory to store Swagger Validator Badge source in. Optional, defaults to `validator-badge`.
-    - `[branch]` - Branch of [Swagger Validator Badge repository](https://github.com/swagger-api/validator-badge/) to use. Optional, defaults to `v.2.0.4` (latest at the time of writing this).
+      - `[target]` - Target directory to store Swagger Validator Badge source in. Optional, defaults to `validator-badge`.
+      - `[branch]` - Branch of [Swagger Validator Badge repository](https://github.com/swagger-api/validator-badge/) to use. Optional, defaults to `v.2.0.4` (latest at the time of writing this).
 - [validate.sh](validate.sh)
-  - Validates a URL against the local validator server.
-  - Busy waiting is performed until the validator server is started, with a default timeout of 60s. You can override the timout value through the `$VALIDATOR_TIMEOUT` environment variable, e.g. `export VALIDATOR_TIMEOUT=90`.
+  - Validates OAS specification at a given URL.
+  - Usage:
+    - `./validate.sh [url]`
+      - `[url]` - URL to OAS specification to validate. Mandatory.
+  - Configuration can be provided through following env vars:
+    - `VALIDATOR_HOST` - Instance of Swagger Validator Badge to validate against. Optional, defaults to `https://validator.swagger.io`. When using a local validator instance set up through `setup-validator.sh`, set this to `http://localhost:8080`.
+    - `VALIDATOR_TIMEOUT` - Timeout in seconds for busy waiting for Swagger Validator Badge to start. Optional, defaults to no timeout when using a remote validator and 60s when using a local validator. 
 
 ## Prerequisites
 
@@ -47,9 +53,7 @@ env:
   - GH_URL=https://raw.githubusercontent.com FILE_TO_VALIDATE=openapi.yaml URL_TO_VALIDATE=$GH_URL/${TRAVIS_PULL_REQUEST_SLUG:-$TRAVIS_REPO_SLUG}/${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}/$FILE_TO_VALIDATE
 before_install:
   - git clone --branch=v1.0.0 https://github.com/mcupak/oas-validator.git
-  - ./oas-validator/setup-validator.sh
+  - ./oas-validator/setup-validator.sh # only when needing a local validator
 script:
   - ./oas-validator/validate.sh "$URL_TO_VALIDATE"
 ```
-
-By default, the validate script performs busy waiting until the validator server is started, with a timeout of 60s. You can override the timout value through the `$VALIDATOR_TIMEOUT` environment variable, e.g. `export VALIDATOR_TIMEOUT=90`.
